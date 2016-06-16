@@ -49,6 +49,7 @@
     {
         this.w  = $(document);
         this.el = $(element);
+        this.rtl = this.el.css('direction') == "rtl";
         this.options = $.extend({}, defaults, options);
         this.init();
     }
@@ -112,7 +113,7 @@
 
                     e.preventDefault();
                     list.dragStart(e.touches ? e.touches[0] : e);
-                };
+                }
             };
 
             var onMoveEvent = function(e)
@@ -367,7 +368,18 @@
                 mouse.distAxX = 0;
                 prev = this.placeEl.prev(opt.itemNodeName);
                 // increase horizontal level if previous sibling exists and is not collapsed
-                if (mouse.distX > 0 && prev.length && !prev.hasClass(opt.collapsedClass)) {
+
+                //! rtl?
+                var distX_direction = true;
+
+                if( this.rtl && mouse.distX > 0 ){
+                    distX_direction = false;
+                } 
+                if( !this.rtl && mouse.distX < 0 ){
+                    distX_direction = false;
+                }
+
+                if ( distX_direction && prev.length && !prev.hasClass(opt.collapsedClass)) {
                     // cannot increase level when item above is collapsed
                     list = prev.find(opt.listNodeName).last();
                     // check if depth limit has reached
@@ -387,7 +399,7 @@
                     }
                 }
                 // decrease horizontal level
-                if (mouse.distX < 0) {
+                if ( !distX_direction ) {
                     // we can't decrease a level if an item preceeds the current one
                     next = this.placeEl.next(opt.itemNodeName);
                     if (!next.length) {
