@@ -467,7 +467,7 @@
         /**
          * Append the .dd-empty div to the list so it can be populated and styled
          *
-         * @param  {element} element The list to apppend the empty div
+         * @param element element The list to apppend the empty div
          */
         appendEmptyElement: function(element) {
             element.append('<div class="' + this.options.emptyClass + '"/>');
