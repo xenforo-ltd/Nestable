@@ -4,7 +4,7 @@
  */
 ;(function($, window, document, undefined)
 {
-    var hasTouch = 'ontouchstart' in document;
+	var hasTouch = 'ontouchstart' in window;
 
     /**
      * Detect CSS pointer-events property
@@ -92,7 +92,8 @@
 
             var onStartEvent = function(e)
             {
-                if (e.which == 1) {
+				if (e.type == 'touchstart' || e.which == 1) {
+					var isTouch = e.type != 'mousedown';
                     var handle = $(e.target);
                     if (!handle.hasClass(list.options.handleClass)) {
                         if (handle.closest('.' + list.options.noDragClass).length) {
@@ -101,33 +102,30 @@
                         handle = handle.closest('.' + list.options.handleClass);
                     }
 
-                    if (!handle.length || list.dragEl) {
-                        return;
-                    }
-
-                    list.isTouch = /^touch/.test(e.type);
-                    if (list.isTouch && e.touches.length !== 1) {
+					if (!handle.length || list.dragEl || (!isTouch && e.button !== 0) || (isTouch && e.touches.length !== 1)) {
                         return;
                     }
 
                     e.preventDefault();
-                    list.dragStart(e.touches ? e.touches[0] : e);
+					list.dragStart(isTouch ? e.touches[0] : e);
                 }
             };
 
             var onMoveEvent = function(e)
             {
+				var isTouch = e.type != 'mousemove';
                 if (list.dragEl) {
                     e.preventDefault();
-                    list.dragMove(e.touches ? e.touches[0] : e);
+					list.dragMove(isTouch ? e.touches[0] : e);
                 }
             };
 
             var onEndEvent = function(e)
             {
+				var isTouch = e.type != 'mouseup';
                 if (list.dragEl) {
                     e.preventDefault();
-                    list.dragStop(e.touches ? e.touches[0] : e);
+					list.dragStop(isTouch ? e.touches[0] : e);
                 }
             };
 
