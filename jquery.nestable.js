@@ -27,23 +27,23 @@
 	})();
 
 	var defaults = {
-		listNodeName    : 'ol',
-		itemNodeName    : 'li',
+		listNodeName		: 'ol',
+		itemNodeName		: 'li',
 		parentId			: 0,
-		rootClass       : 'dd',
-		listClass       : 'dd-list',
-		itemClass       : 'dd-item',
-		dragClass       : 'dd-dragel',
-		handleClass     : 'dd-handle',
-		collapsedClass  : 'dd-collapsed',
-		placeClass      : 'dd-placeholder',
-		noDragClass     : 'dd-nodrag',
-		emptyClass      : 'dd-empty',
-		expandBtnHTML   : '<button data-action="expand" type="button">Expand</button>',
-		collapseBtnHTML : '<button data-action="collapse" type="button">Collapse</button>',
-		group           : 0,
-		maxDepth        : 5,
-		threshold       : 20
+		rootClass		: 'dd',
+		listClass		: 'dd-list',
+		itemClass		: 'dd-item',
+		dragClass		: 'dd-dragel',
+		handleClass		: 'dd-handle',
+		collapsedClass	: 'dd-collapsed',
+		placeClass		: 'dd-placeholder',
+		noDragClass		: 'dd-nodrag',
+		emptyClass		: 'dd-empty',
+		expandBtnHTML	: '<button data-action="expand" type="button">Expand</button>',
+		collapseBtnHTML	: '<button data-action="collapse" type="button">Collapse</button>',
+		group			: 0,
+		maxDepth			: 5,
+		threshold		: 20
 	};
 
 	function Plugin(element, options)
@@ -210,31 +210,31 @@
 		reset: function()
 		{
 			this.mouse = {
-				offsetX   : 0,
-				offsetY   : 0,
-				startX    : 0,
-				startY    : 0,
-				lastX     : 0,
-				lastY     : 0,
-				nowX      : 0,
-				nowY      : 0,
-				distX     : 0,
-				distY     : 0,
-				dirAx     : 0,
-				dirX      : 0,
-				dirY      : 0,
-				lastDirX  : 0,
-				lastDirY  : 0,
-				distAxX   : 0,
-				distAxY   : 0
+				offsetX		: 0,
+				offsetY		: 0,
+				startX		: 0,
+				startY		: 0,
+				lastX		: 0,
+				lastY		: 0,
+				nowX		: 0,
+				nowY		: 0,
+				distX		: 0,
+				distY		: 0,
+				dirAx		: 0,
+				dirX			: 0,
+				dirY			: 0,
+				lastDirX		: 0,
+				lastDirY		: 0,
+				distAxX		: 0,
+				distAxY		: 0
 			};
-			this.isTouch    = false;
-			this.moving     = false;
-			this.dragEl     = null;
-			this.dragRootEl = null;
-			this.dragDepth  = 0;
-			this.hasNewRoot = false;
-			this.pointEl    = null;
+			this.isTouch		= false;
+			this.moving		= false;
+			this.dragEl		= null;
+			this.dragRootEl	= null;
+			this.dragDepth	= 0;
+			this.hasNewRoot	= false;
+			this.pointEl		= null;
 		},
 
 		expandItem: function(li)
