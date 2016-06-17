@@ -29,6 +29,7 @@
     var defaults = {
             listNodeName    : 'ol',
             itemNodeName    : 'li',
+			parentId			: 0,
             rootClass       : 'dd',
             listClass       : 'dd-list',
             itemClass       : 'dd-item',
@@ -167,11 +168,45 @@
             return data;
         },
 
-        serialise: function()
-        {
-            return this.serialize();
-        },
+		serialise: function()
+		{
+			return this.serialize();
+		},
 
+		asNestedSet: function() {
+			var list = this, o = list.options, depth = -1, ret = [], lft = 1;
+			var items = list.el.find(o.listNodeName).first().children(o.itemNodeName);
+
+			items.each(function () {
+				lft = traverse(this, depth + 1, lft);
+			});
+
+			ret = ret.sort(function(a,b){ return (a.lft - b.lft); });
+			return ret;
+
+			function traverse(item, depth, lft) {
+				var rgt = lft + 1, id, pid;
+
+				if ($(item).children(o.listNodeName).children(o.itemNodeName).length > 0 ) {
+					depth++;
+					$(item).children(o.listNodeName).children(o.itemNodeName).each(function () {
+						rgt = traverse($(this), depth, rgt);
+					});
+					depth--;
+				}
+
+				id = parseInt($(item).attr('data-id'));
+				pid = parseInt($(item).parent(o.listNodeName).parent(o.itemNodeName).attr('data-id')) || parseInt(o.parentID) || 0;
+
+				if (id) {
+					ret.push({"id": id, "parent_id": pid, "depth": depth, "lft": lft, "rgt": rgt});
+				}
+
+				lft = rgt + 1;
+				return lft;
+			}
+		},
+		
         reset: function()
         {
             this.mouse = {
@@ -473,6 +508,8 @@
 
     };
 
+	var counter = 0;
+
     $.fn.nestable = function(params)
     {
         var lists  = this,
@@ -484,7 +521,8 @@
 
             if (!plugin) {
                 $(this).data("nestable", new Plugin(this, params));
-                $(this).data("nestable-id", i);
+                $(this).data("nestable-id", 'nestable-uniqueId' + counter);
+				counter++;
             } else {
                 if (typeof params === 'string' && typeof plugin[params] === 'function') {
                     retval = plugin[params]();
