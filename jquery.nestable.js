@@ -29,7 +29,7 @@
 	var defaults = {
 		listNodeName		: 'ol',
 		itemNodeName		: 'li',
-		parentId			: 0,
+		parentID			: 0,
 		rootClass		: 'dd',
 		listClass		: 'dd-list',
 		itemClass		: 'dd-item',
@@ -185,18 +185,22 @@
 			return ret;
 
 			function traverse(item, depth, lft) {
-				var rgt = lft + 1, id, pid;
+				var rgt = lft + 1, id, pid,
+					listNode = o.listNodeName,
+					itemNode = o.itemNodeName,
+					$item = $(item),
+					$childItems = $item.children(listNode).children(itemNode);
 
-				if ($(item).children(o.listNodeName).children(o.itemNodeName).length > 0 ) {
+				if ($childItems.length > 0 ) {
 					depth++;
-					$(item).children(o.listNodeName).children(o.itemNodeName).each(function () {
+					$childItems.each(function () {
 						rgt = traverse($(this), depth, rgt);
 					});
 					depth--;
 				}
 
-				id = parseInt($(item).attr('data-id'));
-				pid = parseInt($(item).parent(o.listNodeName).parent(o.itemNodeName).attr('data-id')) || parseInt(o.parentID) || 0;
+				id = $item.attr('data-id');
+				pid = $item.parent(listNode).parent(itemNode).attr('data-id') || o.parentID;
 
 				if (id) {
 					ret.push({"id": id, "parent_id": pid, "depth": depth, "lft": lft, "rgt": rgt});
