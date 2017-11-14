@@ -51,6 +51,10 @@
 		this.w  = $(document);
 		this.el = $(element);
 		this.options = $.extend({}, defaults, options);
+
+		var dir = this.el.closest('[dir]').attr('dir');
+		this.isRtl = (dir && dir.toUpperCase() == 'RTL');
+
 		this.init();
 	}
 
@@ -308,17 +312,26 @@
 			this.dragRootEl = this.el;
 
 			this.dragEl = $(document.createElement(this.options.listNodeName)).addClass(this.options.listClass + ' ' + this.options.dragClass);
-			this.dragEl.css('width', dragItem.width());
+			var width = dragItem.width();
+			this.dragEl.css('width', width);
+			this.dragEl.data('drag-width', width);
 
 			dragItem.after(this.placeEl);
 			dragItem[0].parentNode.removeChild(dragItem[0]);
 			dragItem.appendTo(this.dragEl);
 
 			$(document.body).append(this.dragEl);
-			this.dragEl.css({
-				'left' : e.pageX - mouse.offsetX,
-				'top'  : e.pageY - mouse.offsetY
-			});
+
+			var dragElCss = {
+				left: e.pageX - mouse.offsetX,
+				top: e.pageY - mouse.offsetY
+			};
+			if (this.isRtl)
+			{
+				dragElCss.left -= this.dragEl.data('drag-width');
+			}
+			this.dragEl.css(dragElCss);
+
 			// total depth of dragging item
 			var i, depth,
 				items = this.dragEl.find(this.options.itemNodeName);
@@ -350,10 +363,15 @@
 				opt   = this.options,
 				mouse = this.mouse;
 
-			this.dragEl.css({
-				'left' : e.pageX - mouse.offsetX,
-				'top'  : e.pageY - mouse.offsetY
-			});
+			var dragElCss = {
+				left: e.pageX - mouse.offsetX,
+				top: e.pageY - mouse.offsetY
+			};
+			if (this.isRtl)
+			{
+				dragElCss.left -= this.dragEl.data('drag-width');
+			}
+			this.dragEl.css(dragElCss);
 
 			// mouse position last events
 			mouse.lastX = mouse.nowX;
@@ -404,7 +422,8 @@
 				mouse.distAxX = 0;
 				prev = this.placeEl.prev(opt.itemNodeName);
 				// increase horizontal level if previous sibling exists and is not collapsed
-				if (mouse.distX > 0 && prev.length && !prev.hasClass(opt.collapsedClass)) {
+				var isIncrease = this.isRtl ? (mouse.distX < 0) : (mouse.distX > 0);
+				if (isIncrease && prev.length && !prev.hasClass(opt.collapsedClass)) {
 					// cannot increase level when item above is collapsed
 					list = prev.find(opt.listNodeName).last();
 					// check if depth limit has reached
@@ -423,8 +442,10 @@
 						}
 					}
 				}
+
 				// decrease horizontal level
-				if (mouse.distX < 0) {
+				var isDecrease = this.isRtl ? (mouse.distX > 0) : (mouse.distX < 0);
+				if (isDecrease) {
 					// we can't decrease a level if an item preceeds the current one
 					next = this.placeEl.next(opt.itemNodeName);
 					if (!next.length) {
